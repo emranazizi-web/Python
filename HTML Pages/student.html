@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ student.name }} - Student Attendance System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Basic navigation -->
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a> |
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+
+    <h1>Student Records</h1>
+    <p><strong>Name:</strong> {{ student.name }}</p>
+    <p><strong>Student ID:</strong> {{ student.student_id }}</p>
+    <p><strong>Course:</strong> {{ course.course_name }} ({{ course.course_code }})</p>
+
+    <!-- Summary of this student in this course -->
+    <h2>Attendance Summary</h2>
+    <table>
+        <tr>
+            <th>Total Classes</th>
+            <th>Present</th>
+            <th>Late</th>
+            <th>Absent</th>
+            <th>Attendance</th>
+        </tr>
+        <tr>
+            <td>{{ summary.total }}</td>
+            <td>{{ summary.present }}</td>
+            <td>{{ summary.late }}</td>
+            <td>{{ summary.absent }}</td>
+            <td>{{ summary.percentage }}%</td>
+        </tr>
+    </table>
+    <p class="note">Late counts as attended in the percentage.</p>
+
+    <!-- Every record of this student in this course -->
+    <h2>Records</h2>
+    {% if records %}
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+            {% for record in records %}
+            <tr>
+                <td>{{ record.date }}</td>
+                <td>{{ record.status }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No attendance has been recorded for this student in this course yet.</p>
+    {% endif %}
+
+    <p>
+        <a href="{{ url_for('course_page', course_code=course.course_code) }}" class="button">Back to Course</a>
+    </p>
+
+    <script src="{{ url_for('javascript_file', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Student Attendance System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="login-page">
+
+    <h1>Student Attendance Management System</h1>
+
+    <div class="box">
+        <h2>Teacher Login</h2>
+
+        <!-- Messages sent from Flask (for example a wrong password) -->
+        {% for message in get_flashed_messages() %}
+            <p class="message">{{ message }}</p>
+        {% endfor %}
+
+        <!-- Error message from JavaScript (hidden until needed) -->
+        <p id="error-message" class="error"></p>
+
+        <!-- The form is sent to the login() function in app.py -->
+        <form id="login-form" action="{{ url_for('login') }}" method="post">
+            <label for="username">User ID:</label>
+            <input type="text" id="username" name="username">
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password">
+
+            <button type="submit">Login</button>
+        </form>
+
+        <p class="note">
+            User ID: <strong>Attendance</strong><br>
+            Password: <strong>12345</strong>
+        </p>
+    </div>
+
+    <script src="{{ url_for('javascript_file', filename='script.js') }}"></script>
+</body>
+</html>

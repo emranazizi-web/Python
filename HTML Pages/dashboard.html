@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Student Attendance System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Basic navigation -->
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a> |
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+
+    <h1>Dashboard</h1>
+    <p>Welcome, Teacher. Open a course to take attendance.</p>
+
+    <!-- Messages sent from Flask -->
+    {% for message in get_flashed_messages() %}
+        <p class="message">{{ message }}</p>
+    {% endfor %}
+
+    <!-- One row for each course -->
+    <h2>Courses</h2>
+    <table>
+        <tr>
+            <th>Course Code</th>
+            <th>Course Name</th>
+            <th>Students</th>
+            <th>Action</th>
+        </tr>
+        {% for row in course_rows %}
+        <tr>
+            <td>{{ row.course.course_code }}</td>
+            <td>{{ row.course.course_name }}</td>
+            <td>{{ row.student_count }}</td>
+            <td>
+                <a href="{{ url_for('course_page', course_code=row.course.course_code) }}" class="button">Open Course</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- Form to add a new course (sent to add_course() in app.py) -->
+    <h2>Add Course</h2>
+    <div class="box">
+        <form action="{{ url_for('add_course') }}" method="post">
+            <label for="course_name">Course Name:</label>
+            <input type="text" id="course_name" name="course_name">
+            <button type="submit">Add Course</button>
+        </form>
+    </div>
+
+    <script src="{{ url_for('javascript_file', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ course.course_name }} - Student Attendance System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Basic navigation -->
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a> |
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+
+    <h1>{{ course.course_name }}</h1>
+    <p><strong>Course Code:</strong> {{ course.course_code }}</p>
+
+    <!-- Messages sent from Flask -->
+    {% for message in get_flashed_messages() %}
+        <p class="message">{{ message }}</p>
+    {% endfor %}
+
+    <!-- Take attendance: one row for each student in the course -->
+    <h2>Students</h2>
+    {% if student_rows %}
+        <!-- The form is sent to save_attendance() in app.py -->
+        <form id="attendance-form" action="{{ url_for('save_attendance', course_code=course.course_code) }}" method="post">
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" value="{{ selected_date }}" class="date-input">
+
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Student ID</th>
+                    <th class="center">Present</th>
+                    <th class="center">Late</th>
+                    <th class="center">Absent</th>
+                    <th>Attendance</th>
+                    <th>Options</th>
+                </tr>
+                {% for row in student_rows %}
+                {% set student_id = row.student.student_id %}
+                <tr>
+                    <td>{{ row.student.name }}</td>
+                    <td>{{ student_id }}</td>
+                    <td class="center">
+                        <input type="radio" name="status_{{ student_id }}" value="Present"
+                            {% if row.saved_status == "Present" or row.saved_status == "" %}checked{% endif %}>
+                    </td>
+                    <td class="center">
+                        <input type="radio" name="status_{{ student_id }}" value="Late"
+                            {% if row.saved_status == "Late" %}checked{% endif %}>
+                    </td>
+                    <td class="center">
+                        <input type="radio" name="status_{{ student_id }}" value="Absent"
+                            {% if row.saved_status == "Absent" %}checked{% endif %}>
+                    </td>
+                    <td>{{ row.summary.percentage }}%</td>
+                    <td class="options">
+                        <a href="{{ url_for('student_page', course_code=course.course_code, student_id=student_id) }}" class="button">View Records</a>
+                        <!-- "formaction" sends the form to a different address: remove_student() -->
+                        <button type="submit" class="remove-button"
+                            formaction="{{ url_for('remove_student', course_code=course.course_code, student_id=student_id) }}">Remove</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            <p>
+                <button type="submit">Save Attendance</button>
+            </p>
+        </form>
+    {% else %}
+        <p>No students are in this course yet. Add a student below.</p>
+    {% endif %}
+
+    <!-- Form to add a student (sent to add_student() in app.py) -->
+    <h2>Add Student</h2>
+    <div class="box">
+        <p class="note">
+            Enter the ID of an existing student, or the ID and name of a new student.
+        </p>
+        <form action="{{ url_for('add_student', course_code=course.course_code) }}" method="post">
+            <label for="student_id">Student ID:</label>
+            <input type="text" id="student_id" name="student_id">
+
+            <label for="name">Name (only for a new student):</label>
+            <input type="text" id="name" name="name">
+
+            <button type="submit">Add Student</button>
+        </form>
+    </div>
+
+    <p>
+        <a href="{{ url_for('dashboard') }}" class="button">Back to Dashboard</a>
+    </p>
+
+    <script src="{{ url_for('javascript_file', filename='script.js') }}"></script>
+</body>
+</html>
